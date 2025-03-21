@@ -1,5 +1,6 @@
 package codesquad.codestagram.controller;
 
+import static codesquad.codestagram.controller.UserController.ERROR_MESSAGE;
 import static codesquad.codestagram.controller.UserController.SESSIONED_USER;
 
 import codesquad.codestagram.domain.Article;
@@ -7,6 +8,7 @@ import codesquad.codestagram.domain.User;
 import codesquad.codestagram.dto.ArticleDto;
 import codesquad.codestagram.repository.ArticleRepository;
 import codesquad.codestagram.repository.UserRepository;
+import codesquad.codestagram.service.ArticleService;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import org.springframework.stereotype.Controller;
@@ -22,25 +24,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class ArticleController {
     public static final String ARTICLES = "articles";
-    private final ArticleRepository articleRepository;
-    private final UserRepository userRepository;
 
-    public ArticleController(ArticleRepository articleRepository, UserRepository userRepository) {
-        this.articleRepository = articleRepository;
-        this.userRepository = userRepository;
+    private final ArticleService articleService;
+
+    public ArticleController(ArticleService articleService) {
+        this.articleService = articleService;
     }
 
     @PostMapping("/articles")
-    public String writeArticle(@ModelAttribute ArticleDto.ArticleRequestDto requestDto) {
-        User user = userRepository.findByUserId(requestDto.getUserId()).get();
-        Article article = requestDto.toArticle(user);
-        articleRepository.save(article);
+    public String writeArticle(@ModelAttribute ArticleDto.ArticleRequestDto requestDto, Model model) {
+        try {
+            articleService.saveArticle(requestDto);
+        }catch (IllegalArgumentException e){
+            model.addAttribute(ERROR_MESSAGE, e.getMessage());
+        }
         return "redirect:/";
     }
 
     @GetMapping("/")
     public String showArticles(Model model) {
-        List<Article> articles = articleRepository.findAll();
+        List<Article> articles = articleService.findArticles();
         model.addAttribute(ARTICLES, articles);
         return "home";
     }
@@ -49,13 +52,18 @@ public class ArticleController {
     public String showArticleDetail(@PathVariable Long articleId, Model model, HttpSession session) {
         if (checkLogin(session)) return "redirect:/login";
 
-        Article article = articleRepository.findById(articleId).get();
-        User sessionedUser = (User) session.getAttribute(SESSIONED_USER);
-        if (sessionedUser.getUserId().equals(article.getUser().getUserId())){
-            model.addAttribute("author", true);
-        }
+        try {
+            Article article = articleService.findArticleById(articleId);
 
-        model.addAttribute(article);
+            User sessionedUser = (User) session.getAttribute(SESSIONED_USER);
+            if (sessionedUser.getUserId().equals(article.getUser().getUserId())) {
+                model.addAttribute("author", true);
+            }
+
+            model.addAttribute(article);
+        }catch (IllegalArgumentException e){
+            model.addAttribute(ERROR_MESSAGE, e.getMessage());
+        }
         return "articles/show";
     }
 
@@ -64,27 +72,37 @@ public class ArticleController {
 
         if (checkLogin(session)) return "redirect:/login";
 
-        Article article = articleRepository.findById(articleId).get();
-        model.addAttribute(article);
+        try {
+            Article article = articleService.findArticleById(articleId);
+            model.addAttribute(article);
+        }catch (IllegalArgumentException e){
+            model.addAttribute(ERROR_MESSAGE, e.getMessage());
+        }
         return "articles/edit";
     }
 
     @PutMapping("articles/{articleId}")
     public String updateArticle(@PathVariable Long articleId, @RequestParam String title,
-                              @RequestParam String content, HttpSession session) {
+                              @RequestParam String content, HttpSession session, Model model) {
         if (checkLogin(session)) return "redirect:/login";
 
-        Article article = articleRepository.findById(articleId).get();
-        article.update(title, content);
-        articleRepository.save(article);
+        try {
+            articleService.updateArticle(articleId, title, content);
+        }catch (IllegalArgumentException e){
+            model.addAttribute(ERROR_MESSAGE, e.getMessage());
+        }
         return "redirect:/articles/" + articleId;
     }
 
     @DeleteMapping("articles/{articleId}")
-    public String deleteArticle(@PathVariable Long articleId, HttpSession session) {
+    public String deleteArticle(@PathVariable Long articleId, HttpSession session, Model model) {
         if (checkLogin(session)) return "redirect:/login";
 
-        articleRepository.deleteById(articleId);
+        try {
+            articleService.delete(articleId);
+        }catch (IllegalArgumentException e){
+            model.addAttribute(ERROR_MESSAGE, e.getMessage());
+        }
         return "redirect:/";
     }
 
