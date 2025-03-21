@@ -47,18 +47,41 @@ public class ArticleController {
 
     @GetMapping("articles/{articleId}")
     public String showArticleDetail(@PathVariable Long articleId, Model model, HttpSession session) {
-        User sessionedUser = (User) session.getAttribute(SESSIONED_USER);
-        // 로그인 체크
-        if (sessionedUser == null) {
-            return "redirect:/login";
-        }
+        if (checkLogin(session)) return "redirect:/login";
 
         Article article = articleRepository.findById(articleId).get();
+        User sessionedUser = (User) session.getAttribute(SESSIONED_USER);
         if (sessionedUser.getUserId().equals(article.getUser().getUserId())){
             model.addAttribute("author", true);
         }
 
         model.addAttribute(article);
         return "articles/show";
+    }
+
+    @GetMapping("articles/{articleId}/edit")
+    public String editArticleForm(@PathVariable Long articleId, Model model, HttpSession session) {
+
+        if (checkLogin(session)) return "redirect:/login";
+
+        Article article = articleRepository.findById(articleId).get();
+        model.addAttribute(article);
+        return "articles/edit";
+    }
+
+    @PutMapping("articles/{articleId}")
+    public String updateArticle(@PathVariable Long articleId, @RequestParam String title,
+                              @RequestParam String content, HttpSession session) {
+        if (checkLogin(session)) return "redirect:/login";
+
+        Article article = articleRepository.findById(articleId).get();
+        article.update(title, content);
+        articleRepository.save(article);
+        return "redirect:/articles/" + articleId;
+    }
+
+    private boolean checkLogin(HttpSession session) {
+        User sessionedUser = (User) session.getAttribute(SESSIONED_USER);
+        return sessionedUser == null;
     }
 }
