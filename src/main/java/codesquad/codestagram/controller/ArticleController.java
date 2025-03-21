@@ -80,6 +80,14 @@ public class ArticleController {
         return "redirect:/articles/" + articleId;
     }
 
+    @DeleteMapping("articles/{articleId}")
+    public String deleteArticle(@PathVariable Long articleId, HttpSession session) {
+        if (checkLogin(session)) return "redirect:/login";
+
+        articleRepository.deleteById(articleId);
+        return "redirect:/";
+    }
+
     private boolean checkLogin(HttpSession session) {
         User sessionedUser = (User) session.getAttribute(SESSIONED_USER);
         return sessionedUser == null;
