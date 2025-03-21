@@ -17,16 +17,17 @@ public class Article {
     private String title;
     @Column(nullable = false)
     private String content;
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 
-    public Article(String title, String content) {
+    public Article(String title, String content, User user) {
         this.title = title;
         this.content = content;
+        this.user = user;
+        this.createdAt = LocalDateTime.now();
     }
 
     protected Article(){}
