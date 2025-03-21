@@ -4,35 +4,99 @@
     <meta charset="UTF-8">
     <title>게시글 상세</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .form-group div {
+            font-size: 1rem;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        .article-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .article-title {
+            font-size: 1.8rem;
+            color: #333;
+            margin: 0;
+        }
+
+        .article-meta {
+            font-size: 0.9rem;
+            color: #666;
+            text-align: right;
+        }
+
+        .article-meta span {
+            margin-left: 15px;
+        }
+
+
+        .form-actions {
+            margin-top: 20px;
+            display: flex;  /* 버튼을 가로로 나열 */
+            justify-content: flex-end;  /* 버튼들을 오른쪽으로 정렬 */
+            gap: 1rem;  /* 버튼들 간의 간격 */
+        }
+
+        .form-actions a, .form-actions button {
+            min-width: 100px;  /* 버튼 최소 너비 설정 */
+        }
+
+        .home-link {
+            background-color: #6c757d;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .home-link:hover {
+            background-color: #5a6268;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="~{header.html}"></div>
 
-<div class="article-container">
-    <div class="article-detail">
-        <div class="article-header">
-            <h2 th:text="${article.title}"></h2>
-            <div class="article-info">
-                <span class="author">작성자: <span th:text="${article.user.userId}"></span></span>
-                <span class="date">작성일: <span th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm')}"></span></span>
-            </div>
+<main>
+    <div class="article-header">
+        <h1 class="article-title" th:text="${article.title}"></h1>
+        <div class="article-meta">
+            <span th:text="${article.user.userId}"></span>
+            <span th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
         </div>
-        <div class="article-content">
-            <p th:text="${article.content}"></p>
-        </div>
-        
-        <!-- 작성자만 수정/삭제 버튼 표시 -->
-        <div th:if="${author}" class="article-actions">
-            <a th:href="@{/articles/{id}/edit(id=${article.id})}" class="btn btn-primary">수정</a>
-            <form th:action="@{/articles/{id}(id=${article.id})}" method="post" style="display: inline;">
-                <input type="hidden" name="_method" value="delete">
-                <button type="submit" class="btn btn-danger">삭제</button>
-            </form>
-        </div>
-        
-        <a href="/">← 목록으로 돌아가기</a>
     </div>
-</div>
+
+    <div class="form-group">
+        <label>내용:</label>
+        <div th:text="${article.content}" style="white-space: pre-wrap;"></div>
+    </div>
+
+    <!-- 작성자만 수정/삭제 버튼 표시 -->
+    <div th:if="${author}" class="form-actions">
+        <form th:action="@{/articles/{id}/edit(id=${article.id})}" method="get" style="display: inline;">
+            <button type="submit" class="btn btn-primary">수정</button>
+        </form>
+        <form th:action="@{/articles/{id}(id=${article.id})}" method="post" style="display: inline;">
+            <input type="hidden" name="_method" value="delete">
+            <button type="submit" class="btn btn-danger">삭제</button>
+        </form>
+    </div>
+    <a href="/" class="home-link">홈으로</a>
+</main>
 
 <div th:replace="~{footer.html}"></div>
 </body>

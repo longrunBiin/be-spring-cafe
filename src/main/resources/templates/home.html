@@ -3,35 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>홈</title>
-    <link rel="stylesheet" href="/css/styles.css">  <!-- CSS 추가 가능 -->
-    <script>
-        // 댓글 전체 보기 버튼 클릭 시 모든 댓글을 보이게 하는 함수
-        function showAllComments() {
-            document.getElementById("all-comments").style.display = "block";
-            document.getElementById("more-comments-btn").style.display = "none";
-        }
-    </script>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+
+    </style>
 </head>
 <body>
     <div th:replace="~{header.html}"></div>
-    <div class="article-container">
-        <div class="article-list">
-            <div th:each="article : ${articles}" class="article">
-                <!-- 게시글 전체를 클릭할 수 있도록 <a> 태그로 감쌈 -->
-                <a th:href="@{/articles/{id}(id=${article.id})}" class="article-link">
-                    <!-- 글 번호 -->
-                    <div class="article-content">
-                        <h2 th:text="${article.title}"></h2>
-                        <div class="article-info">
-                            <span class="author">작성자: <span th:text="${article.user.userId}"></span></span>
-                            <span class="date">작성일: <span th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm')}"></span></span>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div th:replace="~{footer.html}"></div>
 
+    <main>
+        <h1>게시글 목록</h1>
+        <ul class="article-list">
+            <li th:each="article : ${articles}" class="article-item">
+                <a th:href="@{/articles/{id}(id=${article.id})}" class="article-title" th:text="${article.title}"></a>
+                <div class="article-meta">
+                    <span th:text="${article.user.userId}"></span>
+                    <span th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                </div>
+            </li>
+        </ul>
+    </main>
+
+    <div th:replace="~{footer.html}"></div>
 </body>
 </html>
