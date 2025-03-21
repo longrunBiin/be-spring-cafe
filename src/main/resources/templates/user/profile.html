@@ -13,6 +13,11 @@
 </head>
 <body>
 <div th:replace="~{header.html}"></div>
+
+<script th:if="${errorMessage}" th:inline="javascript">
+    alert(/*[[${errorMessage}]]*/ '');
+</script>
+
 <main>
     <h1>회원 프로필</h1>
 

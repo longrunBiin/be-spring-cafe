@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <title>홈</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <script th:if="${errorMessage != null}" th:inline="javascript">
+        window.onload = function() {
+            alert(/*[[${errorMessage}]]*/ '');
+        }
+    </script>
     <style>
 
     </style>

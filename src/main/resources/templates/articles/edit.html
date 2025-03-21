@@ -4,9 +4,15 @@
     <meta charset="UTF-8">
     <title>게시글 수정</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <script th:if="${errorMessage != null}" th:inline="javascript">
+        window.onload = function() {
+            alert(/*[[${errorMessage}]]*/ '');
+        }
+    </script>
 </head>
 <body>
 <div th:replace="~{header.html}"></div>
+
 <main>
     <h1>게시글 수정</h1>
     <div class="form-group">
