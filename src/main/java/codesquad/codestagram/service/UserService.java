@@ -1,5 +1,7 @@
 package codesquad.codestagram.service;
 
+import static codesquad.codestagram.service.ArticleService.NO_USER;
+
 import codesquad.codestagram.domain.User;
 import codesquad.codestagram.dto.UserDto.UserRequestDto;
 import codesquad.codestagram.repository.UserRepository;
@@ -38,11 +40,12 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        return userRepository.findById(id).get();
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException(NO_USER));
     }
 
     public User updateUser(Long id, String name, String email) {
-        User user = userRepository.findById(id).get();
+        User user = getUserById(id);
         user.updateUser(name, email);
         userRepository.save(user);
 

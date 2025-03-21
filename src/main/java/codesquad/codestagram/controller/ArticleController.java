@@ -37,6 +37,7 @@ public class ArticleController {
             articleService.saveArticle(requestDto);
         }catch (IllegalArgumentException e){
             model.addAttribute(ERROR_MESSAGE, e.getMessage());
+            return "articles/form";
         }
         return "redirect:/";
     }
@@ -63,6 +64,7 @@ public class ArticleController {
             model.addAttribute(article);
         }catch (IllegalArgumentException e){
             model.addAttribute(ERROR_MESSAGE, e.getMessage());
+            return "redirect:/";
         }
         return "articles/show";
     }
@@ -77,6 +79,7 @@ public class ArticleController {
             model.addAttribute(article);
         }catch (IllegalArgumentException e){
             model.addAttribute(ERROR_MESSAGE, e.getMessage());
+            return "redirect:/articles/" + articleId;
         }
         return "articles/edit";
     }
@@ -90,6 +93,7 @@ public class ArticleController {
             articleService.updateArticle(articleId, title, content);
         }catch (IllegalArgumentException e){
             model.addAttribute(ERROR_MESSAGE, e.getMessage());
+            return "redirect:/articles/" + articleId;
         }
         return "redirect:/articles/" + articleId;
     }
@@ -102,6 +106,7 @@ public class ArticleController {
             articleService.delete(articleId);
         }catch (IllegalArgumentException e){
             model.addAttribute(ERROR_MESSAGE, e.getMessage());
+            return "redirect:/";
         }
         return "redirect:/";
     }

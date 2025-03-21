@@ -53,15 +53,23 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     public String showUserProfile(@PathVariable Long id, Model model) {
-        User user = userService.getUserById(id);
-        model.addAttribute(USER, user);
+        try{
+            User user = userService.getUserById(id);
+            model.addAttribute(USER, user);
+        }catch (IllegalArgumentException e){
+            model.addAttribute(ERROR_MESSAGE, e.getMessage());
+        }
         return "user/profile";
     }
 
     @GetMapping("/users/{id}/update")
     public String editUser(Model model, @PathVariable Long id) {
-        User user = userService.getUserById(id);
-        model.addAttribute(USER, user);
+        try{
+            User user = userService.getUserById(id);
+            model.addAttribute(USER, user);
+        }catch (IllegalArgumentException e){
+            model.addAttribute(ERROR_MESSAGE, e.getMessage());
+        }
         return "user/updateForm";  // 정보 수정 페이지로 이동
     }
 
