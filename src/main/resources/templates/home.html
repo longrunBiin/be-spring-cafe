@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>홈</title>
@@ -16,14 +16,16 @@
     <div th:replace="~{header.html}"></div>
     <div class="article-container">
         <div class="article-list">
-            <div th:each="article, iterStat : ${articles}" class="article">
+            <div th:each="article : ${articles}" class="article">
                 <!-- 게시글 전체를 클릭할 수 있도록 <a> 태그로 감쌈 -->
-                <a th:href="@{/articles/{id}(id=${iterStat.index + 1})}" class="article-link">
+                <a th:href="@{/articles/{id}(id=${article.id})}" class="article-link">
                     <!-- 글 번호 -->
                     <div class="article-content">
-                        <span class="article-number" th:text="${iterStat.index + 1}">1</span>
-                        <span class="article-separator"> | </span>
-                        <h2 th:text="${article != null ? article.title : '게시글이 없습니다.'}"></h2> <!-- 제목 -->
+                        <h2 th:text="${article.title}"></h2>
+                        <div class="article-info">
+                            <span class="author">작성자: <span th:text="${article.user.userId}"></span></span>
+                            <span class="date">작성일: <span th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd HH:mm')}"></span></span>
+                        </div>
                     </div>
                 </a>
             </div>
