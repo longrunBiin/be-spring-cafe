@@ -3,6 +3,7 @@ package codesquad.codestagram.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 import codesquad.codestagram.domain.Article;
 import codesquad.codestagram.domain.User;
@@ -51,6 +52,7 @@ class ArticleServiceTest {
         // Given
         User user = new User("testUser", "password123", "test", "test@example.com");
         Article article = new Article("test", "testContent", user);
+
         given(userRepository.findByUserId("testUser")).willReturn(Optional.of(user));
         given(articleRepository.findById(1L)).willReturn(Optional.of(article));
         ArticleDto.ArticleRequestDto requestDto = new ArticleRequestDto("test", "testContent", "testUser");
@@ -87,5 +89,22 @@ class ArticleServiceTest {
         assertThat(articles).extracting(Article::getContent).containsExactly("content1", "content2", "content3");
         assertThat(articles).extracting(Article::getUser).containsExactly(user1, user1, user2);
     }
+    @Test
+    @DisplayName("게시글 내용 수정시 제목과 내용이이 수정되어야한다.")
+    void updateArticleTest(){
+        //given
+        User user = new User("testUser", "password123", "test", "test@example.com");
+        Article article = new Article("test", "testContent", user);
 
+        given(userRepository.findByUserId("testUser")).willReturn(Optional.of(user));
+        given(articleRepository.findById(1L)).willReturn(Optional.of(article));
+
+        //when
+        articleService.updateArticle(1L, "updateTitle", "updateContent");
+
+        //then
+        assertThat(article.getTitle()).isEqualTo("updateTitle");
+        assertThat(article.getContent()).isEqualTo("updateContent");
+        verify(articleRepository).save(article);
+    }
 }
