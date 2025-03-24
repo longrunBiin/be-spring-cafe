@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <title>사용자 목록</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <script th:if="${errorMessage != null}" th:inline="javascript">
+        window.onload = function() {
+            alert(/*[[${errorMessage}]]*/ '');
+        }
+    </script>
 </head>
 <body>
 <div th:replace="~{header.html}"></div>

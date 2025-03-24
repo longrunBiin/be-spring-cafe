@@ -111,7 +111,7 @@ public class ArticleController {
         return "redirect:/";
     }
 
-    private boolean checkLogin(HttpSession session) {
+    public static boolean checkLogin(HttpSession session) {
         User sessionedUser = (User) session.getAttribute(SESSIONED_USER);
         return sessionedUser == null;
     }

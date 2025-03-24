@@ -55,8 +55,14 @@ public class User {
         this.email = email;
     }
 
-    public boolean checkEqualTo(String password) {
+    public boolean matchPassword(String password) {
         return this.password.equals(password);
+    }
+
+    public boolean matchId(Long id){
+        if(!this.id.equals(id))
+            throw new IllegalArgumentException("아이디가 일치하지 않습니다.");
+        return true;
     }
 
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class UserController {
@@ -63,12 +64,16 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}/update")
-    public String editUser(Model model, @PathVariable Long id) {
+    public String editUser(Model model, @PathVariable Long id, HttpSession httpSession, RedirectAttributes redirectAttributes) {
+        if (ArticleController.checkLogin(httpSession)) return "redirect:/login";
+
         try{
-            User user = userService.getUserById(id);
+            User user = (User) httpSession.getAttribute(SESSIONED_USER);
+            user.matchId(id);
             model.addAttribute(USER, user);
         }catch (IllegalArgumentException e){
-            model.addAttribute(ERROR_MESSAGE, e.getMessage());
+            redirectAttributes.addFlashAttribute(ERROR_MESSAGE, e.getMessage());
+            return "redirect:/users";
         }
         return "user/updateForm";  // 정보 수정 페이지로 이동
     }
@@ -78,7 +83,7 @@ public class UserController {
         User user = userService.getUserById(id);
         model.addAttribute(USER, user);
 
-        if (user.checkEqualTo(password)) {
+        if (user.matchPassword(password)) {
             model.addAttribute(PASSWORD_VALID, true);
         }else {
             model.addAttribute(PASSWORD_VALID, false);
