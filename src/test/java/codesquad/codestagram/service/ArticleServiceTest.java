@@ -12,6 +12,7 @@ import codesquad.codestagram.dto.UserDto.UserRequestDto;
 import codesquad.codestagram.repository.ArticleRepository;
 import codesquad.codestagram.repository.UserRepository;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,5 +65,27 @@ class ArticleServiceTest {
         assertThat(findArticle.getUser()).isEqualTo(user);
     }
 
+    @Test
+    @DisplayName("게시글 전체 조회시 저장된 모든 글들을 가져와야 한다.")
+    void userListTest(){
+        //given
+        User user1 = new User("testUser1", "password1", "aaa", "test1@example.com");
+        User user2 = new User("testUser2", "password2", "bbb", "test2@example.com");
+
+        Article article1 = new Article("test1", "content1", user1);
+        Article article2 = new Article("test2", "content2", user1);
+        Article article3 = new Article("test3", "content3", user2);
+        List<Article> articleList = List.of(article1, article2, article3);
+        given(articleRepository.findAll()).willReturn(articleList);
+
+        //when
+        List<Article> articles = articleService.findArticles();
+
+        //then
+        assertThat(articles.size()).isEqualTo(3);
+        assertThat(articles).extracting(Article::getTitle).containsExactly("test1", "test2", "test3");
+        assertThat(articles).extracting(Article::getContent).containsExactly("content1", "content2", "content3");
+        assertThat(articles).extracting(Article::getUser).containsExactly(user1, user1, user2);
+    }
 
 }
