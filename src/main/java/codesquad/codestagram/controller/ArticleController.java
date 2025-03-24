@@ -1,13 +1,11 @@
 package codesquad.codestagram.controller;
 
+import static codesquad.codestagram.controller.AuthController.SESSIONED_USER;
 import static codesquad.codestagram.controller.UserController.ERROR_MESSAGE;
-import static codesquad.codestagram.controller.UserController.SESSIONED_USER;
 
 import codesquad.codestagram.domain.Article;
 import codesquad.codestagram.domain.User;
 import codesquad.codestagram.dto.ArticleDto;
-import codesquad.codestagram.repository.ArticleRepository;
-import codesquad.codestagram.repository.UserRepository;
 import codesquad.codestagram.service.ArticleService;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
