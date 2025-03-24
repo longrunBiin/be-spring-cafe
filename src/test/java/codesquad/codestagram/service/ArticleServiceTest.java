@@ -107,4 +107,38 @@ class ArticleServiceTest {
         assertThat(article.getContent()).isEqualTo("updateContent");
         verify(articleRepository).save(article);
     }
+
+    @Test
+    @DisplayName("게시글 삭제 시 게시글이 존재하지 않는다면 에러가 발생한다.")
+    void deleteArticleErrorTest() {
+        //given
+        given(articleRepository.findById(1L)).willReturn(Optional.empty());
+
+        //when & then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> articleService.delete(1L));
+
+        assertThat(exception.getMessage()).isEqualTo("게시글이 존재하지 않습니다.");
+    }
+
+    @Test
+    @DisplayName("게시글 삭제가 되면 DB에서 조회 되는 경우 에러가 발생한다.")
+    void deleteArticleTest() {
+        //given
+        User user = new User("testUser", "password123", "test", "test@example.com");
+        Article article = new Article("test", "testContent", user);
+
+        given(articleRepository.findById(1L)).willReturn(Optional.of(article));
+
+        //when
+        articleService.delete(1L);
+        given(articleRepository.findById(1L)).willReturn(Optional.empty());
+
+        //then
+        verify(articleRepository).delete(article);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> articleService.findArticleById(1L));
+        assertThat(exception.getMessage()).isEqualTo("게시글이 존재하지 않습니다.");
+    }
 }
