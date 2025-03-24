@@ -1,4 +1,31 @@
 <header>
+    <!-- 오류 메시지 컨테이너 -->
+    <div id="errorMessageBox" class="error-box" th:if="${errorMessage != null}" th:text="${errorMessage}"></div>
+
+    <style>
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -10px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translate(-50%, 0); }
+            to { opacity: 0; transform: translate(-50%, -10px); }
+        }
+    </style>
+
+    <script th:if="${errorMessage != null}" th:inline="javascript">
+        window.onload = function() {
+            var errorBox = document.getElementById("errorMessageBox");
+            if (errorBox) {
+                errorBox.style.display = "block";
+                setTimeout(function() {
+                    errorBox.style.display = "none";
+                }, 4000); // 4초 후 자동 사라짐
+            }
+        };
+    </script>
     <nav>
         <div class="logo">
             <a href="/">Codestagram</a>
